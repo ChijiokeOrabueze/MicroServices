@@ -4,9 +4,11 @@ import com.chijiokeorabueze.productservice.dto.ProductRequest;
 import com.chijiokeorabueze.productservice.dto.ProductResponse;
 import com.chijiokeorabueze.productservice.dto.ResponseConstructor;
 import com.chijiokeorabueze.productservice.service.ProductService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,10 +22,11 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseConstructor<Object> createProduct(@RequestBody ProductRequest productRequest) {
+    public ResponseEntity<ResponseConstructor<Object>> createProduct(@Valid @RequestBody ProductRequest productRequest) {
 
-        return productService.createProduct(productRequest);
+        ResponseConstructor<Object> createdProduct = productService.createProduct(productRequest);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(createdProduct);
 
 
     }
