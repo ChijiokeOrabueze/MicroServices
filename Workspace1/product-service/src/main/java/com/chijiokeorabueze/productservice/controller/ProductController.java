@@ -5,14 +5,17 @@ import com.chijiokeorabueze.productservice.dto.ProductResponse;
 import com.chijiokeorabueze.productservice.dto.ResponseConstructor;
 import com.chijiokeorabueze.productservice.service.ProductService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/api/v1/product")
 @AllArgsConstructor
@@ -36,6 +39,13 @@ public class ProductController {
     public ResponseConstructor<Object> getProducts() {
 
         return productService.getProduct();
+
+    }
+
+    @GetMapping("/{code}")
+    public ResponseEntity<Object> getProduct(@Pattern(regexp = "^RSV(-\\d{4,}){2}$") @PathVariable String code){
+
+        return ResponseEntity.status(HttpStatus.OK).body("Hello");
 
     }
 

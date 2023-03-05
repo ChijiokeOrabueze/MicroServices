@@ -1,5 +1,7 @@
 package com.chijiokeorabueze.productservice.exceptions;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -65,6 +67,38 @@ public class GlobalExceptionHandler {
                 .message(fieldError.getDefaultMessage())
                 .build();
 
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    protected ResponseEntity<Object> handleInvalidPathVariable (
+            ConstraintViolationException exception,
+            WebRequest request
+    ){
+        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, "invalid path parameter", exception);
+
+        List<APiSubError> errors = exception.getConstraintViolations()
+                .stream()
+                .map(violation -> mapConstraintToSubError(violation))
+                .collect(Collectors.toList());
+
+        apiError.setSubErrors(errors);
+
+        return buildResponseEntity(apiError);
+    }
+
+    private APiSubError mapConstraintToSubError(ConstraintViolation<?> violation) {
+
+        String[] v = violation.getPropertyPath().toString().split(".");
+        for (String s: v){
+            System.out.println(s);
+        }
+        System.out.println(violation.getPropertyPath().toString());
+        return ApiValidationError.builder()
+                .message(violation.getMessage())
+                .rejectedValue(violation.getInvalidValue())
+                .field(violation.getPropertyPath().toString())
+                .object(violation.getPropertyPath().toString())
+                .build();
     }
 
 
