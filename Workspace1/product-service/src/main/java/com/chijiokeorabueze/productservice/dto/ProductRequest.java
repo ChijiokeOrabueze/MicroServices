@@ -1,9 +1,6 @@
 package com.chijiokeorabueze.productservice.dto;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,6 +22,6 @@ public class ProductRequest {
     @Size(min = 2, max = 200, message = "name should range between 2 to 200 characters.")
     private String description;
 
-    @NotEmpty(message = "name cannot be empty")
+    @NotNull(message = "name cannot be empty")
     private BigDecimal price;
 }
