@@ -1,11 +1,16 @@
 package com.chijiokeorabueze.productservice.service;
 
 import com.chijiokeorabueze.productservice.dto.ProductRequest;
+import com.chijiokeorabueze.productservice.dto.ProductResponse;
 import com.chijiokeorabueze.productservice.dto.ResponseConstructor;
+
+import java.util.List;
 
 public interface ProductService {
 
-    ResponseConstructor<Object> createProduct (ProductRequest productRequest);
+    <T> ResponseConstructor<T> createProduct (ProductRequest productRequest);
 
-    ResponseConstructor<Object> getProduct();
+    List<ProductResponse> getProducts();
+
+    ProductResponse getProduct(String productId) throws Exception;
 }

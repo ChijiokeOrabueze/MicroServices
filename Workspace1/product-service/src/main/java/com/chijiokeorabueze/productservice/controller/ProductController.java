@@ -25,9 +25,9 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ResponseConstructor<Object>> createProduct(@Valid @RequestBody ProductRequest productRequest) {
+    public ResponseEntity<ResponseConstructor<ProductResponse>> createProduct(@Valid @RequestBody ProductRequest productRequest) {
 
-        ResponseConstructor<Object> createdProduct = productService.createProduct(productRequest);
+        ResponseConstructor<ProductResponse> createdProduct = productService.createProduct(productRequest);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(createdProduct);
 
@@ -36,16 +36,16 @@ public class ProductController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public ResponseConstructor<Object> getProducts() {
+    public ResponseConstructor<List<ProductResponse>> getProducts() {
 
-        return productService.getProduct();
+        return new ResponseConstructor<>("Products fetched", 200, productService.getProducts());
 
     }
 
-    @GetMapping("/{code}")
-    public ResponseEntity<Object> getProduct(@Pattern(regexp = "^RSV(-\\d{4,}){2}$") @PathVariable String code){
+    @GetMapping("/{productId}")
+    public ResponseConstructor<ProductResponse> getProduct(@Pattern(regexp = "^[a-fA-F0-9]{24}$") @PathVariable String productId) throws Exception {
 
-        return ResponseEntity.status(HttpStatus.OK).body("Hello");
+        return new ResponseConstructor<>("Product fetched", 200, productService.getProduct(productId));
 
     }
 

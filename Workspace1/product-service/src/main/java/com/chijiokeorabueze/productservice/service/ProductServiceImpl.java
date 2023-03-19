@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -22,37 +23,48 @@ public class ProductServiceImpl implements ProductService{
     private final ProductRepository productRepository;
 
 
-    public ResponseConstructor<Object> createProduct(ProductRequest productRequest) {
+    public ResponseConstructor<ProductResponse> createProduct(ProductRequest productRequest) {
         Product product = Product.builder()
                 .name(productRequest.getName())
                 .description(productRequest.getDescription())
                 .price(productRequest.getPrice())
                 .build();
-
-        productRepository.save(product);
-        log.info("Product {} saved", product.getId());
-        return ResponseConstructor.builder()
-                .message("Product created")
-                .statusCode(201)
-                .data(null)
+        product = productRepository.save(product);
+        ProductResponse response = ProductResponse.builder()
+                .id(product.getId())
+                .price(product.getPrice())
+                .description(product.getDescription())
+                .name(product.getName())
                 .build();
+
+        log.info("Product {} saved", product.getId());
+        return new ResponseConstructor<>("Product created", 201, response);
     }
 
 
-    public ResponseConstructor<Object> getProduct() {
+    public List<ProductResponse> getProducts() {
         List<Product> products = productRepository.findAll();
 
         List<ProductResponse> productResponses = products.stream().map(this::mapProductToProductResponse).toList();
 
+        return productResponses;
 
-        return ResponseConstructor
-                .builder()
-                .message("All products fetched.")
-                .statusCode(200)
-                .data(productResponses)
+    }
+
+    public ProductResponse getProduct(String productId) throws Exception {
+        Optional<Product> product = productRepository.findById(productId);
+
+        if (product.isEmpty()) {
+            throw new Exception();
+        }
+
+        Product product1 = product.get();
+        return ProductResponse.builder()
+                .name(product1.getName())
+                .price(product1.getPrice())
+                .description(product1.getDescription())
+                .id(product1.getId())
                 .build();
-
-
 
     }
 
